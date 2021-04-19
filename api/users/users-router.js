@@ -7,7 +7,7 @@ router.get('/', restricted, (req, res, next) => {
   find().then((res) => {
     res.status(200).json(res);
   }).catch(err => {
-    next({ message: err.message })
+    next({ mesage: err.mesage, status: 500 })
   })
 });
 /**

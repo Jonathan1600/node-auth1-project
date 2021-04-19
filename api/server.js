@@ -3,6 +3,8 @@ const helmet = require("helmet");
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
 const cors = require("cors");
+const authRouter = require("./auth/auth-router");
+const userRouter = require("./users/users-router");
 
 /**
   Do what needs to be done to support sessions with the `express-session` package!
@@ -42,6 +44,9 @@ server.use(session({
 server.use(helmet());
 server.use(express.json());
 server.use(cors());
+
+server.use("/api/auth", authRouter)
+server.use("/api/users", userRouter)
 
 server.get("/", (req, res) => {
   res.json({ api: "up" });
