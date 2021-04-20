@@ -4,10 +4,10 @@ const router = require('express').Router();
 const { find } = require("./users-model");
 
 router.get('/', restricted, (req, res, next) => {
-  find().then((res) => {
-    res.status(200).json(res);
+  find().then((users) => {
+    res.status(200).json(users);
   }).catch(err => {
-    next({ mesage: err.mesage, status: 500 })
+    next({ message: err.message, status: 500 })
   })
 });
 /**

@@ -2,7 +2,7 @@
 // middleware functions from `auth-middleware.js`. You will need them here!
 const { checkUsernameFree, checkUsernameExists, checkPasswordLength } = require("./auth-middleware");
 const router = require("express").Router();
-const { add } = require("../users/users-model");
+const { add, findBy } = require("../users/users-model");
 const bcrypt = require('bcryptjs');
 
 /**
@@ -33,10 +33,10 @@ router.post("/register", checkUsernameFree, checkPasswordLength, (req, res, next
 
   const hash = bcrypt.hashSync(password, 8);
 
-  add({ username, password: hash }).then(res => {
-    res.status(200).json(res);
+  add({ username, password: hash }).then(user => {
+    res.status(200).json(user);
   }).catch(err => {
-    next({ mesage: err.mesage, status: 500 })
+    next({ message: err.message, status: 500 })
   })
 });
 
@@ -56,13 +56,13 @@ router.post("/register", checkUsernameFree, checkPasswordLength, (req, res, next
   }
  */
 
-router.post("/login", checkUsernameExists, (req, res, next) => {
-  const { password } = req.body;
-  const user = req.user;
+router.post("/login", checkUsernameExists, async (req, res, next) => {
+  const { username, password } = req.body;
+  const [user] = await findBy({ username });
 
   if (user && bcrypt.compareSync(password, user.password)) {
     req.session.user = user
-    res.json({ message: "Welcome sue!" })
+    res.json({ message: `Welcome ${username}!` })
   } else {
     next({ message: "Invalid credentials", status: 401 })
   }
